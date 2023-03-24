@@ -1,0 +1,70 @@
+import random
+
+# Function to display the game board
+def display_board(board):
+    print("  |  ".join(board[0:3]))
+    print("__|__".join(["__"] * 3))
+    print("  |  ".join(board[3:6]))
+    print("__|__".join(["__"] * 3))
+    print("  |  ".join(board[6:9]))
+
+# Function to update the game board
+def update_board(board, position, symbol):
+    board[position] = symbol
+
+# Function to get the player's move
+def get_move(player, symbol, board):
+    print(f"{player}, it's your turn ({symbol}). Which space do you want to move to?")
+    move = int(input("Enter the number of the space you want to move to: "))
+    if board[move - 1] == " ":
+        return move
+    else:
+        print("Sorry, that space is already occupied. Please choose another.")
+        return get_move(player, symbol, board)
+
+# Function to determine if the game is won
+def is_win(board, symbol):
+    win_positions = [
+        [1, 2, 3], [4, 5, 6], [7, 8, 9],
+        [1, 4, 7], [2, 5, 8], [3, 6, 9],
+        [1, 5, 9], [3, 5, 7]
+    ]
+    for win_position in win_positions:
+        if all(board[i - 1] == symbol for i in win_position):
+            return True
+    return False
+
+# Initialize the game board
+board = [" " for x in range(9)]
+
+# Determine the players and symbols
+player1 = input("Enter the name of player 1: ")
+symbol1 = input("Enter the symbol you would like to use, player 1 (X or O): ")
+player2 = input("Enter the name of player 2: ")
+symbol2 = "X" if symbol1 == "O" else "O"
+
+# Determine the first player
+if random.randint(0, 1) == 0:
+    current_player = player1
+    current_symbol = symbol1
+else:
+    current_player = player2
+    current_symbol = symbol2
+
+# Play the game
+for i in range(9):
+    display_board(board)
+    position = get_move(current_player, current_symbol, board)
+    update_board(board, position - 1, current_symbol)
+    if is_win(board, current_symbol):
+        display_board(board)
+        print(f"Congratulations, {current_player}! You have won the game.")
+        break
+    if current_player == player1:
+        current_player = player2
+        current_symbol = symbol2
+    else:
+        current_player = player1
+        current_symbol = symbol1
+else:
+    print("The game has ended in a tie.")
